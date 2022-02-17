@@ -8,6 +8,7 @@
     "@remix-run/serve": "^1.2.1",
     "@supabase/supabase-js": "^1.30.3",
     "cross-env": "^7.0.3",
+    "dotenv": "^16.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "remix": "^1.2.1",
@@ -27,7 +28,7 @@
   "scripts": {
     "postinstall": "remix setup node",
     "build": "cross-env NODE_ENV=production remix build",
-    "dev": "cross-env NODE_ENV=development remix dev",
+    "dev": "cross-env NODE_ENV=development node -r dotenv/config node_modules/.bin/remix dev",
     "start": "cross-env NODE_ENV=production remix-serve build"
   }
 }

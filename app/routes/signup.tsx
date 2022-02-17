@@ -5,6 +5,7 @@ import {
   useActionData,
   useTransition,
 } from "remix";
+import { getProfileByUsername } from "~/api.server";
 import { signUp } from "~/auth.server";
 
 type ActionData = {
@@ -38,6 +39,14 @@ export const action: ActionFunction = async (args): Promise<ActionData> => {
       status: "error",
       errorMessage:
         "Username might contain only alphanumeric character and underscored",
+    };
+  }
+
+  const profile = await getProfileByUsername(username);
+  if (profile !== null) {
+    return {
+      status: "error",
+      errorMessage: "Username still exists",
     };
   }
 

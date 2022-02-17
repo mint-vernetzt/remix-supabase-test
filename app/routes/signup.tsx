@@ -2,9 +2,7 @@ import {
   ActionFunction,
   Form,
   Link,
-  redirect,
   useActionData,
-  useCatch,
   useTransition,
 } from "remix";
 import { signUp } from "~/auth.server";

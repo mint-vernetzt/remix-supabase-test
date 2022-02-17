@@ -18,17 +18,31 @@ export const action: ActionFunction = async (args): Promise<ActionData> => {
 
   const email = formData.get("email");
   const password = formData.get("password");
+  const username = formData.get("username");
 
-  if (typeof email !== "string" || typeof password !== "string") {
+  if (
+    typeof email !== "string" ||
+    typeof password !== "string" ||
+    typeof username !== "string"
+  ) {
     // TODO: return wrong fields
     return {
       status: "error",
-      errorMessage: "Please check your credentials",
+      errorMessage: "Please check your data",
+    };
+  }
+
+  const test = username.replace(/[^A-Za-z0-9_]/gi, "");
+  if (test !== username) {
+    return {
+      status: "error",
+      errorMessage:
+        "Username might contain only alphanumeric character and underscored",
     };
   }
 
   // TODO: handle errors
-  const result = await signUp({ email, password });
+  const result = await signUp({ email, password, username });
   return result;
 };
 
@@ -62,6 +76,10 @@ function SignUp() {
         )}
         {(actionData === undefined || actionData.status !== "success") && (
           <Form method="post">
+            <div>
+              <label htmlFor="username-input">Username</label>
+              <input type="text" id="username-input" name="username" required />
+            </div>
             <div>
               <label htmlFor="email-input">Email</label>
               <input type="email" id="email-input" name="email" required />

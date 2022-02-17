@@ -78,10 +78,16 @@ export type SignUpResult = {
 export const signUp = async (args: {
   email: string;
   password: string;
+  username: string;
 }): Promise<SignUpResult> => {
+  const { email, password, ...meta } = args;
+
   // TODO: checkout how to know get info, if user still exists
   // see: https://supabase.com/docs/reference/javascript/auth-signup#notes
-  const { user, session, error } = await supabaseClient.auth.signUp(args);
+  const { user, session, error } = await supabaseClient.auth.signUp(
+    { email, password },
+    { data: meta }
+  );
   if (error) {
     let message = "Something went wrong during sign up";
     if (error.message) {

@@ -1,6 +1,8 @@
+import { type User } from "@supabase/supabase-js";
 import { createCookieSessionStorage } from "remix";
 import { Authenticator, AuthorizationError } from "remix-auth";
 import { SupabaseStrategy } from "remix-auth-supabase";
+import { type Profile } from "./api.server";
 import { supabaseClient, type Session } from "./supabase";
 
 const sessionSecret = process.env.SESSION_SECRET;
@@ -109,4 +111,12 @@ export const isUserAuthenticated = async (
 ): Promise<boolean> => {
   const session = await supabaseStrategy.checkSession(request);
   return session !== null;
+};
+
+export const getUser = async (request: Request): Promise<User | null> => {
+  const session = await supabaseStrategy.checkSession(request);
+  if (session !== null && session.user !== null) {
+    return session.user;
+  }
+  return null;
 };

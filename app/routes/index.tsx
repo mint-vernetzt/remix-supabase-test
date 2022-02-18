@@ -1,15 +1,27 @@
 import { Form, Link, LoaderFunction, useLoaderData } from "remix";
-import { isUserAuthenticated } from "~/auth.server";
+import { getProfileById, type Profile } from "~/api.server";
+import { getUser } from "~/auth.server";
 
 type LoaderData = {
-  isAuthenticated?: boolean;
+  isAuthenticated: boolean;
+  profile: Profile | null;
 };
 
 export const loader: LoaderFunction = async (args): Promise<LoaderData> => {
   const { request } = args;
-  const isAuthenticated = await isUserAuthenticated(request);
+
+  let isAuthenticated = false;
+  let profile = null;
+
+  const user = await getUser(request);
+  if (user !== null) {
+    isAuthenticated = true;
+    profile = await getProfileById(user.id);
+  }
+
   return {
     isAuthenticated,
+    profile,
   };
 };
 
@@ -27,13 +39,23 @@ export default function Index() {
       <nav>
         <ul>
           {loaderData !== null && loaderData.isAuthenticated ? (
-            <li>
-              <Form action="/logout" method="post">
-                <button type="submit" className="button">
-                  Logout
-                </button>
-              </Form>
-            </li>
+            <>
+              {loaderData.profile !== null && (
+                <li>
+                  <Link to={`/profiles/${loaderData.profile?.username}`}>
+                    Profile
+                  </Link>
+                </li>
+              )}
+
+              <li>
+                <Form action="/logout" method="post">
+                  <button type="submit" className="button">
+                    Logout
+                  </button>
+                </Form>
+              </li>
+            </>
           ) : (
             <>
               <li>

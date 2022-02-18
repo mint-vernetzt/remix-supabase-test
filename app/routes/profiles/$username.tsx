@@ -25,14 +25,11 @@ export const loader: LoaderFunction = async (args) => {
       throw new Response("Not found.", { status: 404 });
     }
     const user = await getUser(request);
-    if (user === null) {
-      throw new Response("Forbidden.", { status: 403 });
-    }
-    const isOwner = user.id === profile.id;
+    const isOwner = user !== null && user.id === profile.id;
 
     return {
       isOwner,
-      profile: { ...profile, email: user.email },
+      profile: { ...profile, email: profile.email },
     };
   }
 
@@ -71,9 +68,9 @@ export const action: ActionFunction = async (args): Promise<ActionData> => {
     lastName,
     profileId,
   });
-  console.log(result);
+
   const { data, error } = result;
-  console.log(data);
+
   if (error !== null) {
     return {
       status: "error",

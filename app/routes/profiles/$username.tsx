@@ -86,6 +86,13 @@ function Profile() {
   const transition = useTransition();
   const [hasChanged, setHasChanged] = React.useState(false);
 
+  // deactivate submit button after submit
+  React.useEffect(() => {
+    if (transition.state === "idle") {
+      setHasChanged(false);
+    }
+  }, [transition.state]);
+
   const handleChange = () => {
     setHasChanged(true);
   };

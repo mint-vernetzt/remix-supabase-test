@@ -61,12 +61,10 @@ export const action: ActionFunction = async (args): Promise<ActionData> => {
     throw new Response("Bad Request.", { status: 400 });
   }
 
-  console.log({ firstName, lastName, profileId });
-
-  const result = await updateProfile({
+  const result = await updateProfile(request, {
+    profileId,
     firstName,
     lastName,
-    profileId,
   });
 
   const { data, error } = result;

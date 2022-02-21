@@ -1,4 +1,5 @@
-import { type User } from "@supabase/supabase-js";
+import { type SupabaseClient } from "@supabase/supabase-js";
+import { supabaseStrategy } from "./auth.server";
 import { supabaseClient } from "./supabase";
 
 export type Profile = {
@@ -7,6 +8,16 @@ export type Profile = {
   first_name: string | null;
   last_name: string | null;
   email: string;
+};
+
+const getSupabaseClient = async (request: Request): Promise<SupabaseClient> => {
+  if (supabaseClient.auth.session() === null) {
+    const session = await supabaseStrategy.checkSession(request);
+    if (session) {
+      supabaseClient.auth.setAuth(session.access_token);
+    }
+  }
+  return supabaseClient;
 };
 
 export async function getProfileByUsername(
@@ -31,14 +42,20 @@ export async function getProfileById(id: string): Promise<Profile | null> {
   return data as Profile | null;
 }
 
-export async function updateProfile(args: {
-  profileId: string;
-  firstName: string;
-  lastName: string;
-}) {
-  const { profileId, firstName, lastName } = args;
+export async function updateProfile(
+  request: Request,
+  options: {
+    profileId: string;
+    firstName: string;
+    lastName: string;
+  }
+) {
+  const { profileId, firstName, lastName } = options;
+
+  const client = await getSupabaseClient(request);
+
   // TODO: error handling
-  return await supabaseClient
+  return await client
     .from("profiles")
     .update({ first_name: firstName, last_name: lastName })
     .match({ id: profileId });

@@ -49,23 +49,33 @@ export const action: ActionFunction = async (args): Promise<ActionData> => {
   const firstName = formData.get("first-name");
   const lastName = formData.get("last-name");
   const profileId = formData.get("profile-id");
+  const publicFieldsValue = formData.get("public-fields");
 
-  if (firstName === null && lastName === null && profileId === null) {
+  if (
+    firstName === null &&
+    lastName === null &&
+    profileId === null &&
+    publicFieldsValue === null
+  ) {
     throw new Response("Bad Request.", { status: 400 });
   }
 
   if (
     typeof firstName !== "string" ||
     typeof lastName !== "string" ||
-    typeof profileId !== "string"
+    typeof profileId !== "string" ||
+    typeof publicFieldsValue !== "string"
   ) {
     throw new Response("Bad Request.", { status: 400 });
   }
+
+  const publicFields = publicFieldsValue.split(",");
 
   const result = await updateProfile(request, {
     profileId,
     firstName,
     lastName,
+    publicFields,
   });
 
   const { data, error } = result;
@@ -81,11 +91,33 @@ export const action: ActionFunction = async (args): Promise<ActionData> => {
   };
 };
 
+enum PublicFieldsReducerActionType {
+  Add = "add",
+  Remove = "remove",
+}
+
+const publicFieldsReducer = (
+  state: string[],
+  action: { type: PublicFieldsReducerActionType; payload: string }
+) => {
+  const { type, payload } = action;
+  switch (type) {
+    case PublicFieldsReducerActionType.Add:
+      return state.concat([payload]);
+    case PublicFieldsReducerActionType.Remove:
+      return state.filter((field) => field !== payload);
+  }
+};
+
 function Profile() {
   const loaderData = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
   const transition = useTransition();
   const [hasChanged, setHasChanged] = React.useState(false);
+  const [publicFields, dispatchPublicFields] = React.useReducer(
+    publicFieldsReducer,
+    (loaderData.profile.public_fields as string[]) || []
+  );
 
   // deactivate submit button after submit
   React.useEffect(() => {
@@ -107,6 +139,7 @@ function Profile() {
             type="hidden"
             value={loaderData.profile.id}
           />
+          <input name="public-fields" type="hidden" value={publicFields} />
           <div>
             <label htmlFor="first-name-input">First name</label>
             <input
@@ -115,6 +148,22 @@ function Profile() {
               name="first-name"
               defaultValue={loaderData.profile.first_name || ""}
             />
+            <input
+              type="checkbox"
+              id="is-first-name-public"
+              aria-label="Is first name visible in public profile?"
+              checked={publicFields.includes("first_name")}
+              onChange={(event) => {
+                const type = event.target.checked
+                  ? PublicFieldsReducerActionType.Add
+                  : PublicFieldsReducerActionType.Remove;
+                dispatchPublicFields({
+                  type,
+                  payload: "first_name",
+                });
+              }}
+            />
+            <label htmlFor="is-first-name-public">public</label>
           </div>
           <div>
             <label htmlFor="last-name-input">Last name</label>
@@ -124,6 +173,22 @@ function Profile() {
               name="last-name"
               defaultValue={loaderData.profile.last_name || ""}
             />
+            <input
+              type="checkbox"
+              id="is-last-name-public"
+              aria-label="Is last name visible in public profile?"
+              checked={publicFields.includes("last_name")}
+              onChange={(event) => {
+                const type = event.target.checked
+                  ? PublicFieldsReducerActionType.Add
+                  : PublicFieldsReducerActionType.Remove;
+                dispatchPublicFields({
+                  type,
+                  payload: "last_name",
+                });
+              }}
+            />
+            <label htmlFor="is-last-name-public">public</label>
           </div>
           <button
             type="submit"
@@ -139,6 +204,22 @@ function Profile() {
       <div>
         <p>Username: {loaderData.profile.username}</p>
         <p>Email: {loaderData.profile.email}</p>
+        {!loaderData.isOwner && (
+          <>
+            {loaderData.profile.public_fields !== null &&
+            loaderData.profile.public_fields?.includes("first_name") &&
+            loaderData.profile.first_name !== null &&
+            loaderData.profile.first_name !== "" ? (
+              <p>First name: {loaderData.profile.first_name}</p>
+            ) : null}
+            {loaderData.profile.public_fields !== null &&
+            loaderData.profile.public_fields?.includes("last_name") &&
+            loaderData.profile.last_name !== null &&
+            loaderData.profile.last_name !== "" ? (
+              <p>Last name: {loaderData.profile.last_name}</p>
+            ) : null}
+          </>
+        )}
       </div>
     </>
   );

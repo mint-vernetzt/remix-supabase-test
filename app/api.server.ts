@@ -39,15 +39,20 @@ export async function updateProfile(
     profileId: string;
     firstName: string;
     lastName: string;
+    publicFields: string[];
   }
 ) {
-  const { profileId, firstName, lastName } = options;
+  const { profileId, firstName, lastName, publicFields } = options;
 
   const client = await getSupabaseClient(request);
 
   // TODO: error handling
   return await client
     .from<definitions["profiles"]>("profiles")
-    .update({ first_name: firstName, last_name: lastName })
+    .update({
+      first_name: firstName,
+      last_name: lastName,
+      public_fields: publicFields,
+    })
     .match({ id: profileId });
 }

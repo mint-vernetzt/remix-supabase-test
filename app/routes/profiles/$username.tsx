@@ -9,12 +9,12 @@ import {
   useTransition,
 } from "remix";
 import { getProfileByUsername, updateProfile } from "~/api.server";
-import { definitions } from "~/supabase-types";
 import { getUser } from "~/auth.server";
+import type { Profile } from "~/types";
 
 type LoaderData = {
   isOwner: boolean;
-  profile: definitions["profiles"];
+  profile: Profile;
 };
 
 export const loader: LoaderFunction = async (args) => {

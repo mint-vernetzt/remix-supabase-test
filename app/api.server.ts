@@ -1,7 +1,7 @@
 import { type SupabaseClient } from "@supabase/supabase-js";
 import { supabaseStrategy } from "./auth.server";
 import { supabaseClient } from "./supabase";
-import { definitions } from "./supabase-types";
+import type { Institution, Profile } from "./types";
 
 const getSupabaseClient = async (request: Request): Promise<SupabaseClient> => {
   if (supabaseClient.auth.session() === null) {
@@ -16,7 +16,7 @@ const getSupabaseClient = async (request: Request): Promise<SupabaseClient> => {
 export async function getProfileByUsername(username: string) {
   // TODO: error handling
   const { error, data } = await supabaseClient
-    .from<definitions["profiles"]>("profiles")
+    .from<Profile>("profiles")
     .select("*")
     .eq("username", username)
     .single();
@@ -26,7 +26,7 @@ export async function getProfileByUsername(username: string) {
 export async function getProfileById(id: string) {
   // TODO: error handling
   const { error, data } = await supabaseClient
-    .from<definitions["profiles"]>("profiles")
+    .from<Profile>("profiles")
     .select("*")
     .eq("id", id)
     .single();
@@ -48,11 +48,21 @@ export async function updateProfile(
 
   // TODO: error handling
   return await client
-    .from<definitions["profiles"]>("profiles")
+    .from<Profile>("profiles")
     .update({
       first_name: firstName,
       last_name: lastName,
       public_fields: publicFields,
     })
     .match({ id: profileId });
+}
+
+export async function getInstitutionBySlug(slug: string) {
+  // TODO: error handling
+  const { error, data } = await supabaseClient
+    .from<Institution>("institutions")
+    .select("*")
+    .eq("slug", slug)
+    .single();
+  return data;
 }

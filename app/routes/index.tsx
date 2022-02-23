@@ -1,10 +1,11 @@
 import { Form, Link, LoaderFunction, useLoaderData } from "remix";
-import { getProfileById, type Profile } from "~/api.server";
+import { getProfileById } from "~/api.server";
 import { getUser } from "~/auth.server";
+import { definitions } from "~/supabase-types";
 
 type LoaderData = {
   isAuthenticated: boolean;
-  profile: Profile | null;
+  profile: definitions["profiles"] | null;
 };
 
 export const loader: LoaderFunction = async (args): Promise<LoaderData> => {

@@ -8,12 +8,13 @@ import {
   useLoaderData,
   useTransition,
 } from "remix";
-import { getProfileByUsername, Profile, updateProfile } from "~/api.server";
+import { getProfileByUsername, updateProfile } from "~/api.server";
+import { definitions } from "~/supabase-types";
 import { getUser } from "~/auth.server";
 
 type LoaderData = {
   isOwner: boolean;
-  profile: Profile & { email: string };
+  profile: definitions["profiles"];
 };
 
 export const loader: LoaderFunction = async (args) => {

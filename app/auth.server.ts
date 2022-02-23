@@ -2,7 +2,6 @@ import { type User } from "@supabase/supabase-js";
 import { createCookieSessionStorage } from "remix";
 import { Authenticator, AuthorizationError } from "remix-auth";
 import { SupabaseStrategy } from "remix-auth-supabase";
-import { type Profile } from "./api.server";
 import { supabaseClient, type Session } from "./supabase";
 
 const sessionSecret = process.env.SESSION_SECRET;

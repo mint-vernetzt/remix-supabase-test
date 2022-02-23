@@ -12,12 +12,201 @@ export interface paths {
       };
     };
   };
+  "/institution_members": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.institution_members.id"];
+          institution_id?: parameters["rowFilter.institution_members.institution_id"];
+          member_id?: parameters["rowFilter.institution_members.member_id"];
+          is_privileged?: parameters["rowFilter.institution_members.is_privileged"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["institution_members"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** institution_members */
+          institution_members?: definitions["institution_members"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.institution_members.id"];
+          institution_id?: parameters["rowFilter.institution_members.institution_id"];
+          member_id?: parameters["rowFilter.institution_members.member_id"];
+          is_privileged?: parameters["rowFilter.institution_members.is_privileged"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.institution_members.id"];
+          institution_id?: parameters["rowFilter.institution_members.institution_id"];
+          member_id?: parameters["rowFilter.institution_members.member_id"];
+          is_privileged?: parameters["rowFilter.institution_members.is_privileged"];
+        };
+        body: {
+          /** institution_members */
+          institution_members?: definitions["institution_members"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
+  "/institution_network_members": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.institution_network_members.id"];
+          institution_id?: parameters["rowFilter.institution_network_members.institution_id"];
+          network_member_id?: parameters["rowFilter.institution_network_members.network_member_id"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["institution_network_members"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** institution_network_members */
+          institution_network_members?: definitions["institution_network_members"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.institution_network_members.id"];
+          institution_id?: parameters["rowFilter.institution_network_members.institution_id"];
+          network_member_id?: parameters["rowFilter.institution_network_members.network_member_id"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.institution_network_members.id"];
+          institution_id?: parameters["rowFilter.institution_network_members.institution_id"];
+          network_member_id?: parameters["rowFilter.institution_network_members.network_member_id"];
+        };
+        body: {
+          /** institution_network_members */
+          institution_network_members?: definitions["institution_network_members"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
   "/institutions": {
     get: {
       parameters: {
         query: {
           id?: parameters["rowFilter.institutions.id"];
-          instituation_name?: parameters["rowFilter.institutions.instituation_name"];
+          institution_name?: parameters["rowFilter.institutions.institution_name"];
           slug?: parameters["rowFilter.institutions.slug"];
           email?: parameters["rowFilter.institutions.email"];
           phone?: parameters["rowFilter.institutions.phone"];
@@ -28,7 +217,7 @@ export interface paths {
           linkedin?: parameters["rowFilter.institutions.linkedin"];
           twitter?: parameters["rowFilter.institutions.twitter"];
           xing?: parameters["rowFilter.institutions.xing"];
-          instituation_description?: parameters["rowFilter.institutions.instituation_description"];
+          institution_description?: parameters["rowFilter.institutions.institution_description"];
           regions?: parameters["rowFilter.institutions.regions"];
           topics?: parameters["rowFilter.institutions.topics"];
           members?: parameters["rowFilter.institutions.members"];
@@ -89,7 +278,7 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.institutions.id"];
-          instituation_name?: parameters["rowFilter.institutions.instituation_name"];
+          institution_name?: parameters["rowFilter.institutions.institution_name"];
           slug?: parameters["rowFilter.institutions.slug"];
           email?: parameters["rowFilter.institutions.email"];
           phone?: parameters["rowFilter.institutions.phone"];
@@ -100,7 +289,7 @@ export interface paths {
           linkedin?: parameters["rowFilter.institutions.linkedin"];
           twitter?: parameters["rowFilter.institutions.twitter"];
           xing?: parameters["rowFilter.institutions.xing"];
-          instituation_description?: parameters["rowFilter.institutions.instituation_description"];
+          institution_description?: parameters["rowFilter.institutions.institution_description"];
           regions?: parameters["rowFilter.institutions.regions"];
           topics?: parameters["rowFilter.institutions.topics"];
           members?: parameters["rowFilter.institutions.members"];
@@ -125,7 +314,7 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.institutions.id"];
-          instituation_name?: parameters["rowFilter.institutions.instituation_name"];
+          institution_name?: parameters["rowFilter.institutions.institution_name"];
           slug?: parameters["rowFilter.institutions.slug"];
           email?: parameters["rowFilter.institutions.email"];
           phone?: parameters["rowFilter.institutions.phone"];
@@ -136,7 +325,7 @@ export interface paths {
           linkedin?: parameters["rowFilter.institutions.linkedin"];
           twitter?: parameters["rowFilter.institutions.twitter"];
           xing?: parameters["rowFilter.institutions.xing"];
-          instituation_description?: parameters["rowFilter.institutions.instituation_description"];
+          institution_description?: parameters["rowFilter.institutions.institution_description"];
           regions?: parameters["rowFilter.institutions.regions"];
           topics?: parameters["rowFilter.institutions.topics"];
           members?: parameters["rowFilter.institutions.members"];
@@ -185,7 +374,6 @@ export interface paths {
           interests?: parameters["rowFilter.profiles.interests"];
           offerings?: parameters["rowFilter.profiles.offerings"];
           looking_for?: parameters["rowFilter.profiles.looking_for"];
-          belongs_to?: parameters["rowFilter.profiles.belongs_to"];
           public_fields?: parameters["rowFilter.profiles.public_fields"];
           created_at?: parameters["rowFilter.profiles.created_at"];
           updated_at?: parameters["rowFilter.profiles.updated_at"];
@@ -258,7 +446,6 @@ export interface paths {
           interests?: parameters["rowFilter.profiles.interests"];
           offerings?: parameters["rowFilter.profiles.offerings"];
           looking_for?: parameters["rowFilter.profiles.looking_for"];
-          belongs_to?: parameters["rowFilter.profiles.belongs_to"];
           public_fields?: parameters["rowFilter.profiles.public_fields"];
           created_at?: parameters["rowFilter.profiles.created_at"];
           updated_at?: parameters["rowFilter.profiles.updated_at"];
@@ -295,7 +482,6 @@ export interface paths {
           interests?: parameters["rowFilter.profiles.interests"];
           offerings?: parameters["rowFilter.profiles.offerings"];
           looking_for?: parameters["rowFilter.profiles.looking_for"];
-          belongs_to?: parameters["rowFilter.profiles.belongs_to"];
           public_fields?: parameters["rowFilter.profiles.public_fields"];
           created_at?: parameters["rowFilter.profiles.created_at"];
           updated_at?: parameters["rowFilter.profiles.updated_at"];
@@ -318,15 +504,60 @@ export interface paths {
 }
 
 export interface definitions {
+  institution_members: {
+    /**
+     * Format: uuid
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     * @default extensions.uuid_generate_v4()
+     */
+    id: string;
+    /**
+     * Format: uuid
+     * @description Note:
+     * This is a Foreign Key to `institutions.id`.<fk table='institutions' column='id'/>
+     */
+    institution_id: string;
+    /**
+     * Format: uuid
+     * @description Note:
+     * This is a Foreign Key to `profiles.id`.<fk table='profiles' column='id'/>
+     */
+    member_id: string;
+    /** Format: boolean */
+    is_privileged?: boolean;
+  };
+  institution_network_members: {
+    /**
+     * Format: uuid
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     * @default extensions.uuid_generate_v4()
+     */
+    id: string;
+    /**
+     * Format: uuid
+     * @description Note:
+     * This is a Foreign Key to `institutions.id`.<fk table='institutions' column='id'/>
+     */
+    institution_id: string;
+    /**
+     * Format: uuid
+     * @description Note:
+     * This is a Foreign Key to `institutions.id`.<fk table='institutions' column='id'/>
+     */
+    network_member_id: string;
+  };
   institutions: {
     /**
      * Format: uuid
      * @description Note:
      * This is a Primary Key.<pk/>
+     * @default extensions.uuid_generate_v4()
      */
     id: string;
     /** Format: character varying */
-    instituation_name?: string;
+    institution_name?: string;
     /** Format: character varying */
     slug?: string;
     /** Format: character varying */
@@ -348,7 +579,7 @@ export interface definitions {
     /** Format: character varying */
     xing?: string;
     /** Format: text */
-    instituation_description?: string;
+    institution_description?: string;
     /** Format: ARRAY */
     regions?: unknown[];
     /** Format: ARRAY */
@@ -412,8 +643,6 @@ export interface definitions {
     /** Format: ARRAY */
     looking_for?: unknown[];
     /** Format: ARRAY */
-    belongs_to?: unknown[];
-    /** Format: ARRAY */
     public_fields?: unknown[];
     /** Format: timestamp with time zone */
     created_at?: string;
@@ -455,12 +684,30 @@ export interface parameters {
   offset: string;
   /** @description Limiting and Pagination */
   limit: string;
+  /** @description institution_members */
+  "body.institution_members": definitions["institution_members"];
+  /** Format: uuid */
+  "rowFilter.institution_members.id": string;
+  /** Format: uuid */
+  "rowFilter.institution_members.institution_id": string;
+  /** Format: uuid */
+  "rowFilter.institution_members.member_id": string;
+  /** Format: boolean */
+  "rowFilter.institution_members.is_privileged": string;
+  /** @description institution_network_members */
+  "body.institution_network_members": definitions["institution_network_members"];
+  /** Format: uuid */
+  "rowFilter.institution_network_members.id": string;
+  /** Format: uuid */
+  "rowFilter.institution_network_members.institution_id": string;
+  /** Format: uuid */
+  "rowFilter.institution_network_members.network_member_id": string;
   /** @description institutions */
   "body.institutions": definitions["institutions"];
   /** Format: uuid */
   "rowFilter.institutions.id": string;
   /** Format: character varying */
-  "rowFilter.institutions.instituation_name": string;
+  "rowFilter.institutions.institution_name": string;
   /** Format: character varying */
   "rowFilter.institutions.slug": string;
   /** Format: character varying */
@@ -482,7 +729,7 @@ export interface parameters {
   /** Format: character varying */
   "rowFilter.institutions.xing": string;
   /** Format: text */
-  "rowFilter.institutions.instituation_description": string;
+  "rowFilter.institutions.institution_description": string;
   /** Format: ARRAY */
   "rowFilter.institutions.regions": string;
   /** Format: ARRAY */
@@ -541,8 +788,6 @@ export interface parameters {
   "rowFilter.profiles.offerings": string;
   /** Format: ARRAY */
   "rowFilter.profiles.looking_for": string;
-  /** Format: ARRAY */
-  "rowFilter.profiles.belongs_to": string;
   /** Format: ARRAY */
   "rowFilter.profiles.public_fields": string;
   /** Format: timestamp with time zone */

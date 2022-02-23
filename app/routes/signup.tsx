@@ -42,7 +42,7 @@ export const action: ActionFunction = async (args): Promise<ActionData> => {
     };
   }
 
-  const profile = await getProfileByUsername(username);
+  const profile = await getProfileByUsername(request, username);
   if (profile !== null) {
     return {
       status: "error",

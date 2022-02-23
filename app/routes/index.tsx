@@ -17,7 +17,7 @@ export const loader: LoaderFunction = async (args): Promise<LoaderData> => {
   const user = await getUser(request);
   if (user !== null) {
     isAuthenticated = true;
-    profile = await getProfileById(user.id);
+    profile = await getProfileById(request, user.id);
   }
 
   return {

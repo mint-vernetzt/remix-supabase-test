@@ -2,6 +2,7 @@ import React from "react";
 import {
   ActionFunction,
   Form,
+  Link,
   LoaderFunction,
   redirect,
   useActionData,
@@ -10,26 +11,29 @@ import {
 } from "remix";
 import { getProfileByUsername, updateProfile } from "~/api.server";
 import { getUser } from "~/auth.server";
-import type { Profile } from "~/types";
+import type { Profile, ProfileWithInstitutions } from "~/types";
 
 type LoaderData = {
   isOwner: boolean;
-  profile: Profile;
+  isAuthenticated: boolean;
+  profile: ProfileWithInstitutions;
 };
 
 export const loader: LoaderFunction = async (args) => {
   const { request, params } = args;
 
   if (params.username) {
-    const profile = await getProfileByUsername(params.username);
+    const profile = await getProfileByUsername(request, params.username);
     if (profile === null) {
       throw new Response("Not found.", { status: 404 });
     }
     const user = await getUser(request);
+    const isAuthenticated = user !== null;
     const isOwner = user !== null && user.id === profile.id;
 
     return {
       isOwner,
+      isAuthenticated,
       profile: { ...profile, email: profile.email },
     };
   }
@@ -133,70 +137,75 @@ function Profile() {
   return (
     <>
       {loaderData.isOwner && (
-        <Form method="post" onChange={handleChange}>
-          <input
-            name="profile-id"
-            type="hidden"
-            value={loaderData.profile.id}
-          />
-          <input name="public-fields" type="hidden" value={publicFields} />
-          <div>
-            <label htmlFor="first-name-input">First name</label>
+        <>
+          <h1>Profile Settings</h1>
+          <Form method="post" onChange={handleChange}>
             <input
-              type="text"
-              id="first-name-input"
-              name="first-name"
-              defaultValue={loaderData.profile.first_name || ""}
+              name="profile-id"
+              type="hidden"
+              value={loaderData.profile.id}
             />
-            <input
-              type="checkbox"
-              id="is-first-name-public"
-              aria-label="Is first name visible in public profile?"
-              checked={publicFields.includes("first_name")}
-              onChange={(event) => {
-                const type = event.target.checked
-                  ? PublicFieldsReducerActionType.Add
-                  : PublicFieldsReducerActionType.Remove;
-                dispatchPublicFields({
-                  type,
-                  payload: "first_name",
-                });
-              }}
-            />
-            <label htmlFor="is-first-name-public">public</label>
-          </div>
-          <div>
-            <label htmlFor="last-name-input">Last name</label>
-            <input
-              type="text"
-              id="last-name-input"
-              name="last-name"
-              defaultValue={loaderData.profile.last_name || ""}
-            />
-            <input
-              type="checkbox"
-              id="is-last-name-public"
-              aria-label="Is last name visible in public profile?"
-              checked={publicFields.includes("last_name")}
-              onChange={(event) => {
-                const type = event.target.checked
-                  ? PublicFieldsReducerActionType.Add
-                  : PublicFieldsReducerActionType.Remove;
-                dispatchPublicFields({
-                  type,
-                  payload: "last_name",
-                });
-              }}
-            />
-            <label htmlFor="is-last-name-public">public</label>
-          </div>
-          <button
-            type="submit"
-            disabled={hasChanged === false || transition.state === "submitting"}
-          >
-            {transition.state === "submitting" ? "Updating" : "Update"}
-          </button>
-        </Form>
+            <input name="public-fields" type="hidden" value={publicFields} />
+            <div>
+              <label htmlFor="first-name-input">First name</label>
+              <input
+                type="text"
+                id="first-name-input"
+                name="first-name"
+                defaultValue={loaderData.profile.first_name || ""}
+              />
+              <input
+                type="checkbox"
+                id="is-first-name-public"
+                aria-label="Is first name visible in public profile?"
+                checked={publicFields.includes("first_name")}
+                onChange={(event) => {
+                  const type = event.target.checked
+                    ? PublicFieldsReducerActionType.Add
+                    : PublicFieldsReducerActionType.Remove;
+                  dispatchPublicFields({
+                    type,
+                    payload: "first_name",
+                  });
+                }}
+              />
+              <label htmlFor="is-first-name-public">public</label>
+            </div>
+            <div>
+              <label htmlFor="last-name-input">Last name</label>
+              <input
+                type="text"
+                id="last-name-input"
+                name="last-name"
+                defaultValue={loaderData.profile.last_name || ""}
+              />
+              <input
+                type="checkbox"
+                id="is-last-name-public"
+                aria-label="Is last name visible in public profile?"
+                checked={publicFields.includes("last_name")}
+                onChange={(event) => {
+                  const type = event.target.checked
+                    ? PublicFieldsReducerActionType.Add
+                    : PublicFieldsReducerActionType.Remove;
+                  dispatchPublicFields({
+                    type,
+                    payload: "last_name",
+                  });
+                }}
+              />
+              <label htmlFor="is-last-name-public">public</label>
+            </div>
+            <button
+              type="submit"
+              disabled={
+                hasChanged === false || transition.state === "submitting"
+              }
+            >
+              {transition.state === "submitting" ? "Updating" : "Update"}
+            </button>
+          </Form>
+        </>
       )}
       {actionData !== undefined && actionData.status === "error" && (
         <p>{actionData.errorMessage}</p>
@@ -221,6 +230,23 @@ function Profile() {
           </>
         )}
       </div>
+      {loaderData.isAuthenticated && (
+        <>
+          <h2>Institutions</h2>
+          <ul>
+            {loaderData.profile.institution_members.map((member) => {
+              const { institutions } = member;
+              return (
+                <li>
+                  <Link to={`/institutions/${institutions.slug}`}>
+                    {institutions.slug}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </>
+      )}
     </>
   );
 }

@@ -1,7 +1,12 @@
 import { type SupabaseClient } from "@supabase/supabase-js";
 import { supabaseStrategy } from "./auth.server";
 import { supabaseClient } from "./supabase";
-import type { Institution, Profile } from "./types";
+import type {
+  Institution,
+  InstitutionWithMembers,
+  Profile,
+  ProfileWithInstitutions,
+} from "./types";
 
 const getSupabaseClient = async (request: Request): Promise<SupabaseClient> => {
   if (supabaseClient.auth.session() === null) {
@@ -13,19 +18,25 @@ const getSupabaseClient = async (request: Request): Promise<SupabaseClient> => {
   return supabaseClient;
 };
 
-export async function getProfileByUsername(username: string) {
+export async function getProfileByUsername(request: Request, username: string) {
+  const client = await getSupabaseClient(request);
+
   // TODO: error handling
-  const { error, data } = await supabaseClient
-    .from<Profile>("profiles")
-    .select("*")
+  const { error, data } = await client
+    .from<ProfileWithInstitutions>("profiles")
+    .select(
+      "*, institution_members ( institution_id, is_privileged, institutions (slug) )"
+    )
     .eq("username", username)
     .single();
   return data;
 }
 
-export async function getProfileById(id: string) {
+export async function getProfileById(request: Request, id: string) {
+  const client = await getSupabaseClient(request);
+
   // TODO: error handling
-  const { error, data } = await supabaseClient
+  const { error, data } = await client
     .from<Profile>("profiles")
     .select("*")
     .eq("id", id)
@@ -57,12 +68,74 @@ export async function updateProfile(
     .match({ id: profileId });
 }
 
-export async function getInstitutionBySlug(slug: string) {
+export async function createInstitution(
+  request: Request,
+  options: { slug: string }
+) {
+  request;
+  const client = await getSupabaseClient(request);
+
   // TODO: error handling
-  const { error, data } = await supabaseClient
+  const { error, data } = await client
+    .from<Institution>("institutions")
+    .insert([options])
+    .limit(1)
+    .single();
+
+  if (error) {
+    console.error(error);
+  }
+
+  return data;
+}
+
+export async function getInstitutionBySlug(
+  request: Request,
+  options: { slug: string }
+) {
+  const client = await getSupabaseClient(request);
+
+  // TODO: error handling
+  const { error, data } = await client
     .from<Institution>("institutions")
     .select("*")
-    .eq("slug", slug)
+    .eq("slug", options.slug)
     .single();
   return data;
 }
+
+export async function getInstitutionWithMembersBySlug(
+  request: Request,
+  options: { slug: string }
+) {
+  const client = await getSupabaseClient(request);
+
+  // TODO: error handling
+  const { error, data } = await client
+    .from<InstitutionWithMembers>("institutions")
+    .select(
+      "*, institution_members ( member_id, is_privileged, profiles ( username ) )"
+    )
+    .eq("slug", options.slug)
+    .single();
+  return data;
+}
+
+export async function updateInstitution(
+  request: Request,
+  options: {
+    institutionId: string;
+    slug: string;
+  }
+) {
+  const client = await getSupabaseClient(request);
+
+  const { institutionId, slug } = options;
+
+  // TODO: error handling
+  return await client
+    .from<Institution>("institutions")
+    .update({ slug })
+    .match({ id: institutionId });
+}
+

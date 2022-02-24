@@ -16,3 +16,5 @@ export type InstitutionWithMembers = Institution & {
     profiles: { username: string };
   }[];
 };
+
+export type InstitutionMembers = definitions["institution_members"];

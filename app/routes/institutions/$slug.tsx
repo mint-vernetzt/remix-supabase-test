@@ -13,6 +13,7 @@ import {
   updateInstitution,
 } from "~/api.server";
 import { getUser } from "~/auth.server";
+import AddUser from "~/components/AddUser";
 import type { InstitutionWithMembers } from "~/types";
 
 type LoaderData = {
@@ -104,8 +105,6 @@ export const action: ActionFunction = async (args) => {
     });
   }
 
-  console.log(data);
-
   return redirect(`/institutions/${data.slug}`);
 };
 
@@ -189,6 +188,9 @@ function Institution() {
             })}
           </ul>
         </>
+      )}
+      {loaderData.isPrivileged && loaderData.institution.slug !== undefined && (
+        <AddUser slug={loaderData.institution.slug} />
       )}
     </>
   );

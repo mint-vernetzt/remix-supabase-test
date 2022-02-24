@@ -1,8 +1,9 @@
 import { type SupabaseClient } from "@supabase/supabase-js";
 import { supabaseStrategy } from "./auth.server";
 import { supabaseClient } from "./supabase";
-import type {
+import {
   Institution,
+  InstitutionMembers,
   InstitutionWithMembers,
   Profile,
   ProfileWithInstitutions,
@@ -40,6 +41,18 @@ export async function getProfileById(request: Request, id: string) {
     .from<Profile>("profiles")
     .select("*")
     .eq("id", id)
+    .single();
+  return data;
+}
+
+export async function getProfileByEmail(request: Request, email: string) {
+  const client = await getSupabaseClient(request);
+
+  // TODO: error handling
+  const { error, data } = await client
+    .from<Profile>("profiles")
+    .select("*")
+    .eq("email", email)
     .single();
   return data;
 }
@@ -143,3 +156,30 @@ export async function updateInstitution(
     .single();
 }
 
+export async function addMemberToInstitution(
+  request: Request,
+  options: { institutionId: string; memberId: string }
+) {
+  const client = await getSupabaseClient(request);
+  return await client.from<InstitutionMembers>("institution_members").insert({
+    institution_id: options.institutionId,
+    member_id: options.memberId,
+    is_privileged: false,
+  });
+}
+
+export async function isStillMemberOfInstitution(
+  request: Request,
+  options: { institutionId: string; memberId: string }
+) {
+  const client = await getSupabaseClient(request);
+
+  const result = await client
+    .from<InstitutionMembers>("institution_members")
+    .select("id")
+    .match({
+      institution_id: options.institutionId,
+      member_id: options.memberId,
+    });
+  return result.data !== null && result.data.length > 0;
+}

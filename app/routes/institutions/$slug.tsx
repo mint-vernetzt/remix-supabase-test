@@ -9,6 +9,7 @@ import {
 } from "remix";
 import {
   getInstitutionWithMembersBySlug,
+  getProfileById,
   updateInstitution,
 } from "~/api.server";
 import { getUser } from "~/auth.server";
@@ -19,6 +20,7 @@ type LoaderData = {
   isPrivileged: boolean;
   isMember: boolean;
   institution: InstitutionWithMembers;
+  username?: string;
 };
 
 export const loader: LoaderFunction = async (args) => {
@@ -41,6 +43,7 @@ export const loader: LoaderFunction = async (args) => {
   let isPrivileged = false;
   let isMember = false;
   let isAuthenticated = false;
+  let username: string | undefined;
 
   if (user !== null) {
     isAuthenticated = true;
@@ -50,6 +53,11 @@ export const loader: LoaderFunction = async (args) => {
     isPrivileged = institution.institution_members.some(
       (member) => member.member_id === user.id && member.is_privileged === true
     );
+
+    const profile = await getProfileById(request, user.id);
+    if (profile !== null) {
+      username = profile.username;
+    }
   }
 
   return {
@@ -57,6 +65,7 @@ export const loader: LoaderFunction = async (args) => {
     isPrivileged,
     isMember,
     institution,
+    username,
   };
 };
 
@@ -87,7 +96,17 @@ export const action: ActionFunction = async (args) => {
       errorMessage: error.message,
     };
   }
-  return redirect(`/institutions/${slug}`);
+
+  if (data === null) {
+    throw new Response("Internal Server Error.", {
+      status: 500,
+      statusText: "Internal Server Error",
+    });
+  }
+
+  console.log(data);
+
+  return redirect(`/institutions/${data.slug}`);
 };
 
 function Institution() {
@@ -95,6 +114,36 @@ function Institution() {
   const transition = useTransition();
   return (
     <>
+      <nav>
+        <ul>
+          <li>
+            <Link to="/">Home</Link>
+          </li>
+          {loaderData.isAuthenticated ? (
+            <>
+              <Form action="/logout" method="post">
+                <button type="submit" className="button">
+                  Logout
+                </button>
+              </Form>
+              {loaderData.username && (
+                <li>
+                  <Link to={`/profiles/${loaderData.username}`}>Profile</Link>
+                </li>
+              )}
+            </>
+          ) : (
+            <>
+              <li>
+                <Link to="/signup">Sign up</Link>
+              </li>
+              <li>
+                <Link to="/login">Login</Link>
+              </li>
+            </>
+          )}
+        </ul>
+      </nav>
       {loaderData.isPrivileged ? (
         <>
           <h1>Institution Settings</h1>

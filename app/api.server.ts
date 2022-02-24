@@ -65,7 +65,9 @@ export async function updateProfile(
       last_name: lastName,
       public_fields: publicFields,
     })
-    .match({ id: profileId });
+    .match({ id: profileId })
+    .limit(1)
+    .single();
 }
 
 export async function createInstitution(
@@ -136,6 +138,8 @@ export async function updateInstitution(
   return await client
     .from<Institution>("institutions")
     .update({ slug })
-    .match({ id: institutionId });
+    .match({ id: institutionId })
+    .limit(1)
+    .single();
 }
 

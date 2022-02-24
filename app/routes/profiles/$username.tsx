@@ -136,6 +136,34 @@ function Profile() {
 
   return (
     <>
+      <nav>
+        <ul>
+          <li>
+            <Link to="/">Home</Link>
+          </li>
+          {loaderData.isAuthenticated ? (
+            <>
+              <Form action="/logout" method="post">
+                <button type="submit" className="button">
+                  Logout
+                </button>
+              </Form>
+              <li>
+                <Link to="/institutions/create">Create Institution</Link>
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <Link to="/signup">Sign up</Link>
+              </li>
+              <li>
+                <Link to="/login">Login</Link>
+              </li>
+            </>
+          )}
+        </ul>
+      </nav>
       {loaderData.isOwner && (
         <>
           <h1>Profile Settings</h1>
